@@ -22,21 +22,29 @@ func main() {
 type tickMsg struct{}
 type errMsg error
 
+type report struct {
+	Loc       string
+	Temp      string
+	Scale     string
+	Condition string
+}
+
 type model struct {
-	textInput textinput.Model
-	err       error
+	zipcode textinput.Model
+	report  report
+	err     error
 }
 
 func initialModel() model {
 	ti := textinput.New()
 	ti.Placeholder = "90210"
 	ti.Focus()
-	ti.CharLimit = 156
+	ti.CharLimit = 7
 	ti.Width = 20
 
 	return model{
-		textInput: ti,
-		err:       nil,
+		zipcode: ti,
+		err:     nil,
 	}
 }
 
@@ -60,14 +68,19 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 	}
 
-	m.textInput, cmd = m.textInput.Update(msg)
+	m.zipcode, cmd = m.zipcode.Update(msg)
 	return m, cmd
 }
 
 func (m model) View() string {
 	return fmt.Sprintf(
 		"What zipcode do you want the weather for (90210)?\n\n%s\n\n%s",
-		m.textInput.View(),
+		m.zipcode.View(),
 		"(esc to quit)",
 	) + "\n"
+}
+
+func getWeather(zipcode string) (*report, error) {
+	url := fmt.Sprintf("https://api.openweathermap.org/data/2.5/weather?zip=%s,%s&appid=%s")
+	return nil, nil
 }
